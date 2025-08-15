@@ -195,7 +195,13 @@ except Exception as e:
 while weiter is not (None or ""):
     print(f"DEBUG: Weiter nach Resumption-Token")
     # Request für fortgeführte Anfrage
-    Antwort = requests.get(f"{BASE_URL}?verb=ListRecords&resumptionToken={weiter}")
+    url = f"{BASE_URL}?verb=ListRecords&resumptionToken={weiter}"
+    try:
+        Antwort = requests.get(url, timeout=10)
+        Antwort.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Fehler bei der Anfrage: {e}")
+        exit()
     # Routine Starten mit dem Ergebnis
     weiter = lese_datensaetze(Antwort)
 
